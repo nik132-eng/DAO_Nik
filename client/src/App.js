@@ -11,7 +11,8 @@ function App() {
     contract: null,
   });
   const [account, setAccount] = useState("Not connected");
-  
+  const [funds, setFunds]=useState(0);
+
   useEffect(() => {
     async function init() {
       const provider = new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545");
@@ -56,11 +57,20 @@ function App() {
       setAccount(selectedAccountAddress);
     }
   };
+
+  useEffect(()=>{
+    const {contract}= state;
+    async function fundAvailability(){
+      const fund = await contract.methods.availableFunds().call();
+      setFunds(fund);
+    }
+    contract && fundAvailability();
+  },[state]);
   
   return (
     <div className="App">
    <p className="ca">Connected Account:{account}</p>
-   <p className="ca">Available Funds:0 ETH</p>
+   <p className="ca">Available Funds:{funds} Wei</p>
    <form className="label0" id="myForm">
         <label htmlFor="">Choose an account</label>
         <select className="innerBox" id="selectNumber" onChange={selectAccount}>

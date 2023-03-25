@@ -105,21 +105,22 @@ function _transfer(uint amount,address payable to) internal{
    to.transfer(amount);
 }
 
-function allow(address to) public onlyManager(){
-  withdrwalStatus[manager][to]=true;
-}
-function disallow(address to) public onlyManager(){
-  withdrwalStatus[manager][to]=false;
+mapping(address => mapping(address => bool)) withdrawalStatus;
+
+function allow(address manager, address to) public {
+  require(msg.sender == manager, "Only the manager can allow withdrawals");
+  withdrawalStatus[manager][to] = true;
 }
 
-function withdrawEther(uint amount) public {
+function disallow(address manager, address to) public {
+  require(msg.sender == manager, "Only the manager can disallow withdrawals");
+  withdrawalStatus[manager][to] = false;
+}
+
+function withdrawAllEther() public {
   require(withdrwalStatus[manager][msg.sender]==true,"You are not allowed to withdraw");
-  require(numOfshares[msg.sender]>=amount,"Not enought balance to withdraw");
-  numOfshares[msg.sender]-=amount;
-  if(numOfshares[msg.sender]==0){
     isInvestor[msg.sender]=false;
-  }
-  _transfer(amount,payable(msg.sender));
+  _transfer(numOfshares[msg.sender],payable(msg.sender));
 }
 
 function ProposalList() public view returns(Proposal[] memory) {
