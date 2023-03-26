@@ -1,4 +1,3 @@
-import { useState } from "react";
 import web3 from "web3";
 
 function Contribute({ state, account }) {

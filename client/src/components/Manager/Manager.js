@@ -4,10 +4,12 @@ import WithdrawStatus from "./WithdrawStatus";
 
 function Manager({ state, account }) {
     const [isProposalTime, setIsProposalTime] = useState(false);
+    const [manager,setManager]=useState('');
 
     const handleStartProposalTime = () => {
-    setIsProposalTime(true);
-};
+        setIsProposalTime(true);
+        setManager(account);
+    };
 
     const handleEndProposalTime = () => {
         setIsProposalTime(false);

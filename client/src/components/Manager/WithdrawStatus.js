@@ -1,45 +1,45 @@
 import { useState } from 'react';
 
-function WithdrawStatus({ state, account }) {
+function WithdrawStatus({ state, account,manager }) {
   const [allowStatus, setAllowStatus] = useState(false);
   const [disallowStatus, setDisallowStatus] = useState(false);
 
   const handleAllow = async (event) => {
     event.preventDefault();
-    const address = event.target.parentNode.querySelector('.address').value;
-    await state.contract.methods.allow(state.manager, address).send({ from: account });
-    setAllowStatus(true);
-    alert("Withdrawal permission granted for the address entered.");
+    const add = document.getElementById("allow-address").value;
+    if (add) {
+      await state.contract.methods.allow(manager, add).send({ from: account , gas:1000000});
+      setAllowStatus(true);
+      alert("Withdrawal permission granted for the address entered.");
+    } else {
+      alert("Manager address or withdrawal address is missing.");
+    }
   };
 
   const handleDisallow = async (event) => {
     event.preventDefault();
-    const address = event.target.parentNode.querySelector('.address').value;
-    await state.contract.methods.disallow(state.manager, address).send({ from: account });
-    setDisallowStatus(true);
-    alert("Withdrawal permission revoked for the address entered.");
+    const address = document.getElementById("disallow-address").value;
+    if (manager && address) {
+      await state.contract.methods.disallow(manager, address).send({ from: account , gas:1000000});
+      setDisallowStatus(true);
+      alert("Withdrawal permission revoked for the address entered.");
+    } else {
+      alert("Manager address or withdrawal address is missing.");
+    }
   };
 
   return (
     <>
-      <form>
-        <label className="label1" htmlFor="address">
-          Address:
-        </label>
-        <input type="text" className="address"></input>
-        <button type="submit" onClick={handleAllow}>Allow</button>
-      </form>
+      Address:
+      <input type="text" id="allow-address"/>
+      <button onClick={handleAllow}>Allow</button>
       {allowStatus && <p>Withdrawal permission granted for the address entered.</p>}
-      <br />
-      <form>
-        <label className="label1" htmlFor="address">
-          Address:
-        </label>
-        <input type="text" className="address"></input>
-        <button type="submit" onClick={handleDisallow}>Disallow</button>
-      </form>
+      <br/>
+      Address:
+      <input type="text" id="disallow-address"></input>
+      <button onClick={handleDisallow}>Disallow</button>
       {disallowStatus && <p>Withdrawal permission revoked for the address entered.</p>}
-      <br />
+      <br/>
     </>
   );
 }
